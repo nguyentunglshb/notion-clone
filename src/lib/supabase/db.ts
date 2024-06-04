@@ -19,7 +19,7 @@ const migrateDb = async () => {
     });
     console.log("🟢 Successfully Migrated");
   } catch (e) {
-    console.log("🔴 Error Migrating client");
+    console.log("🔴 Error Migrating client", e);
   }
 };
 
