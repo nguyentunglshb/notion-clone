@@ -13,12 +13,16 @@ import {
     FormField,
     FormItem,
     FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
 import Image from "next/image";
 
 import Logo from "@/../public/cypresslogo.svg";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Loader from "@/components/global/Loader";
+import { actionLoginUser } from "@/actions/auth-actions";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -35,7 +39,16 @@ const LoginPage = () => {
 
     const isLoading = form.formState.isSubmitting;
 
-    const onSubmit = async (data: z.infer<typeof FormSchema>) => {};
+    const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
+        const { error } = await actionLoginUser(formData);
+
+        if (error) {
+            form.reset();
+            setSubmitError(error.message);
+        }
+
+        router.replace("/dashboard");
+    };
 
     return (
         <Form {...form}>
@@ -72,6 +85,41 @@ const LoginPage = () => {
                         </FormItem>
                     )}
                 ></FormField>
+
+                <FormField
+                    disabled={isLoading}
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    autoComplete="password"
+                                    {...field}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                ></FormField>
+
+                {submitError && <FormMessage>{submitError}</FormMessage>}
+
+                <Button
+                    type="submit"
+                    className="w-full p-6"
+                    size="lg"
+                    disabled={isLoading}
+                >
+                    {!isLoading ? "Login" : <Loader />}
+                </Button>
+                <span className="self-container">
+                    Dont have an account?
+                    <Link href="/signup" className="text-primary-foreground">
+                        Sign up
+                    </Link>
+                </span>
             </form>
         </Form>
     );
