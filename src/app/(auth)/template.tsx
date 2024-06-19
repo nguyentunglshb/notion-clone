@@ -1,8 +1,10 @@
-import React, { FC, PropsWithChildren } from "react";
+import React from "react";
 
-interface TemplateProps extends PropsWithChildren {}
+interface TemplateProps {
+    children: React.ReactNode;
+}
 
-const Template: FC<TemplateProps> = ({ children }) => {
+const Template: React.FC<TemplateProps> = ({ children }) => {
     return <div className="flex h-screen justify-center p-6">{children}</div>;
 };
 

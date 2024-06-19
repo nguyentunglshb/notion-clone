@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import db from "@/lib/supabase/db";
 import { ThemeProvider } from "@/lib/providers";
 import { DM_Sans } from "next/font/google";
 import { twMerge } from "tailwind-merge";
@@ -17,14 +16,14 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    console.log({ db });
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body className={twMerge("bg-background", inter.className)}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"
                     enableSystem
+                    disableTransitionOnChange
                 >
                     {children}
                 </ThemeProvider>

@@ -18,11 +18,21 @@ export async function actionLoginUser({
     return response;
 }
 
-export async function actionSignUpUser({
-    email,
-    password,
-}: z.infer<typeof FormSchema>) {
+export async function actionSignUpUser(body: FormData) {
+    const formData = Object.fromEntries(body);
+    const parsed = FormSchema.safeParse(formData);
+
+    if (!parsed.success) {
+        return {
+            error: {
+                message: "Invalid data",
+            },
+        };
+    }
+
     const supabase = createClient();
+
+    const { email, password } = parsed.data;
 
     const { data } = await supabase
         .from("profiles")
@@ -30,18 +40,13 @@ export async function actionSignUpUser({
         .eq("email", email);
 
     if (data?.length)
-        return {
-            error: "User already exists",
-            data,
-        };
-
+        return { error: { message: "User already exists", data } };
     const response = await supabase.auth.signUp({
         email,
         password,
         options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`,
         },
     });
-
     return response;
 }
